@@ -67,10 +67,8 @@ public class WallRunning : MonoBehaviour
         if((wallLeft || wallRight) && verticalInput > 0 && AboveGround())
         {
             if(!pm.wallrunning) 
-            StartWallRun();
-               
+                StartWallRun();
         }
-
         else 
         { 
             if (pm.wallrunning)
@@ -85,14 +83,20 @@ public class WallRunning : MonoBehaviour
 
     private void WallRunningMovement()
     {
-        rb.useGravity = false:
+        rb.useGravity = false;
         rb.velocity = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
             
         Vector3 wallNormal = wallRight ? rightWallhit.normal : leftWallhit.normal;
 
         Vector3 wallForward = Vector3.Cross(wallNormal, transform.up);
 
+        if ((orientation.forward - wallForward).magnitude > (orientation.forward - -wallForward).magnitude)
+            wallForward = -wallForward;
+
         rb.AddForce(wallForward * wallRunForce, ForceMode.Force);
+
+        if(!(wallLeft & horizontalInput > 0) && !(wallRight && horizontalInput < 0))
+                rb.AddForce(-wallNormal * 100, ForceMode.Force);
     }
 
     private void StopWallRun()
